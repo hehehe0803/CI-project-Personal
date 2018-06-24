@@ -37,12 +37,17 @@ public class GameWindow extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    gameCanvas.positionXPlayer -= 8;
+                    gameCanvas.player.setSpeedXPlayer(-8);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    gameCanvas.positionXPlayer += 8;
+                    gameCanvas.player.setSpeedXPlayer(8);
                 }
-
+                if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    gameCanvas.player.setSpeedYPlayer(-8);
+                }
+                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    gameCanvas.player.setSpeedYPlayer(8);
+                }
             }
 
             @Override

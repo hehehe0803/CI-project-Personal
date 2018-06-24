@@ -4,28 +4,23 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameCanvas extends JPanel {
 
-    BufferedImage starImage;
-    BufferedImage enemyImage;
-    BufferedImage playerImage;
+//    BufferedImage starImage;
+//    BufferedImage enemyImage;
+//    BufferedImage playerImage;
 
     //BackBuffered
-    BufferedImage backBuffered;
-    Graphics graphics;
+    private BufferedImage backBuffered;
+    private Graphics graphics;
+    private Background background = new Background();
 
-    public int positionXStar = 1024;
-    int positionYStar = 200;
-
-    public int positionXPlayer = 512;
-    public int positionYPlayer = 300;
-
-    public int positionXEnemy = 100;
-    public int positionYEnemy = 200;
-
-    public int speedXEnemy = 2;
-    public int speedYEnemy = 2;
+    private List<Star> starList = new ArrayList<>();
+    private List<Enemy> enemyList = new ArrayList<>();
+    protected Player player = new Player();
 
 
     public GameCanvas() {
@@ -33,20 +28,35 @@ public class GameCanvas extends JPanel {
 
         this.setupBackBuffered();
 
-        this.setupCharacter();
+        for (int i = 0; i < 50; i++) {
+            this.createStar();
+        }
+
+        this.createEnemy();
+
+        this.createPlayer();
+
+        this.renderAll();
 
         this.setVisible(true);
+
+        this.runAll();
     }
 
     private void setupBackBuffered() {
         this.backBuffered = new BufferedImage(1024, 600, BufferedImage.TYPE_4BYTE_ABGR);
         this.graphics = this.backBuffered.getGraphics();
     }
-
-    private void setupCharacter() {
-        this.starImage = this.loadImage("resources/images/star.png");
-        this.enemyImage = this.loadImage("resources/images/circle.png");
-        this.playerImage = this.loadImage("resources/images/circle.png");
+    private void createPlayer() {
+        Player player = new Player();
+    }
+    private void createEnemy() {
+        Enemy enemy = new Enemy();
+        this.enemyList.add(enemy);
+    }
+    private void createStar() {
+        Star star = new Star();
+        this.starList.add(star);
     }
 
     @Override
@@ -55,39 +65,21 @@ public class GameCanvas extends JPanel {
     }
 
     public void renderAll() {
-        this.graphics.setColor(Color.BLACK);
-        this.graphics.fillRect(0, 0, 1024, 600);
+        this.background.render(graphics);
 
-        this.graphics.drawImage(this.starImage, this.positionXStar, this.positionYStar, 5, 5, null);
+        this.player.render(graphics);
 
-        this.graphics.drawImage(this.enemyImage, this.positionXEnemy, this.positionYEnemy, 20, 20, null);
+        this.starList.forEach(star -> star.render(graphics));
 
-        this.graphics.drawImage(this.playerImage, this.positionXPlayer, this.positionYPlayer, 20, 20, null);
+        this.enemyList.forEach(enemy -> enemy.render(graphics));
 
         this.repaint();
     }
 
     public void runAll() {
-        this.positionXStar -= 3;
-        this.runEnemy();
+        this.starList.forEach(star -> star.run());
+        this.enemyList.forEach(enemy -> enemy.run());
     }
 
-    private void runEnemy() {
-        this.positionXEnemy += this.speedXEnemy;
-        this.positionYEnemy += this.speedYEnemy;
 
-        if (this.positionXEnemy < 0 || this.positionXEnemy > 1024 - 20)
-            this.speedXEnemy = -this.speedXEnemy;
-
-        if (this.positionYEnemy < 0 || this.positionYEnemy > 600 - 20)
-            this.speedYEnemy = -this.speedYEnemy;
-    }
-
-    private BufferedImage loadImage(String path) {
-        try {
-            return ImageIO.read(new File(path));
-        } catch (IOException e) {
-            return null;
-        }
-    }
 }
